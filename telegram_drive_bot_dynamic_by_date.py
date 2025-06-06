@@ -1,7 +1,14 @@
-
 import logging
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes, MessageHandler, filters, CallbackQueryHandler, ConversationHandler
+from telegram.ext import (
+    ApplicationBuilder,
+    CommandHandler,
+    ContextTypes,
+    MessageHandler,
+    filters,
+    CallbackQueryHandler,
+    ConversationHandler
+)
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
 from datetime import datetime
@@ -76,7 +83,8 @@ async def handle_worker_selection(update: Update, context: ContextTypes.DEFAULT_
 
     if choice == "done":
         selected = context.user_data.get("selected", [])
-      await query.edit_message_text(text="העובדים שנבחרו:\n" + "\n".join(selected))
+        summary = "✅ העובדים שנבחרו:\n" + "\n".join(f"• {name}" for name in selected)
+        await query.edit_message_text(text=summary)
         return ConversationHandler.END
 
     if choice not in context.user_data["selected"]:
