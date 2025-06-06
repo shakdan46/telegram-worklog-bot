@@ -76,8 +76,7 @@ async def handle_worker_selection(update: Update, context: ContextTypes.DEFAULT_
 
     if choice == "done":
         selected = context.user_data.get("selected", [])
-        await query.edit_message_text(text="העובדים שנבחרו:
-" + "\n".join(selected))
+      await query.edit_message_text(text="העובדים שנבחרו:\n" + "\n".join(selected))
         return ConversationHandler.END
 
     if choice not in context.user_data["selected"]:
