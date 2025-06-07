@@ -1,4 +1,3 @@
-
 import logging
 import io
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
@@ -39,7 +38,6 @@ async def receive_date(update: Update, context: ContextTypes.DEFAULT_TYPE):
         context.user_data['selected_date'] = date_obj.strftime('%d/%m/%Y')
         context.user_data['month_name'] = hebrew_month
 
-        # הורדת הקובץ מהדרייב
         request = drive_service.files().get_media(fileId=FILE_ID)
         fh = io.BytesIO()
         downloader = MediaIoBaseDownload(fh, request)
@@ -85,7 +83,6 @@ async def handle_worker_selection(update: Update, context: ContextTypes.DEFAULT_
             await query.edit_message_text(text="לא נבחרו עובדים.")
             return ConversationHandler.END
 
-        # הורדת הקובץ שוב כדי לעדכן
         request = drive_service.files().get_media(fileId=FILE_ID)
         fh = io.BytesIO()
         downloader = MediaIoBaseDownload(fh, request)
@@ -100,24 +97,20 @@ async def handle_worker_selection(update: Update, context: ContextTypes.DEFAULT_
         for row in sheet.iter_rows(min_row=2):
             date_cell = row[0]
             name_cell = row[1]
-            status_cell = row[2]  # "הגיע לעבודה?" בעמודה ג'
+            status_cell = row[2]  # עמודת "הגיע לעבודה?"
             date_val = date_cell.value.strftime('%d/%m/%Y') if isinstance(date_cell.value, datetime) else date_cell.value
             name_val = str(name_cell.value).strip() if name_cell.value else ""
             if date_val == context.user_data['selected_date'] and name_val in selected:
                 status_cell.value = True
 
-        # שמירה לקובץ חדש בזיכרון
         out_stream = io.BytesIO()
         wb.save(out_stream)
         out_stream.seek(0)
 
-        # העלאה מחדש לדרייב
         media_body = MediaIoBaseUpload(out_stream, mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
         drive_service.files().update(fileId=FILE_ID, media_body=media_body).execute()
 
-        await query.edit_message_text(text="סיימנו ✅ העובדים שנבחרו:
-" + "
-".join(selected))
+        await query.edit_message_text(text="העובדים שנבחרו ✅:\n" + "\n".join(selected))
         return ConversationHandler.END
 
     if choice not in context.user_data["selected"]:
