@@ -126,8 +126,7 @@ async def handle_worker_selection(update: Update, context: ContextTypes.DEFAULT_
             await query.edit_message_text("❌ לא נבחרו פועלים.")
             return ConversationHandler.END
 
-        text = "נבחרו:
-" + "\n".join(selected)
+        text = "נבחרו:\n" + "\n".join(selected)
         buttons = [
             [InlineKeyboardButton("אישור ✅", callback_data="confirm")],
             [InlineKeyboardButton("הסר שם ❌", callback_data="remove")]
@@ -152,8 +151,7 @@ async def confirm_selection(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if query.data.startswith("remove_"):
         name_to_remove = query.data.split("_", 1)[1]
         context.user_data["selected"].remove(name_to_remove)
-        text = "עודכן:
-" + "\n".join(context.user_data["selected"])
+        text = "עודכן:\n" + "\n".join(context.user_data["selected"])
         buttons = [
             [InlineKeyboardButton("אישור ✅", callback_data="confirm")],
             [InlineKeyboardButton("הסר שם ❌", callback_data="remove")]
